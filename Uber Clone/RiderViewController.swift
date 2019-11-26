@@ -25,6 +25,8 @@ class RiderViewController: UIViewController, CLLocationManagerDelegate {
     
     var userLocation = CLLocationCoordinate2D()
     
+    var uberHasBeenCalled = false
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -37,6 +39,22 @@ class RiderViewController: UIViewController, CLLocationManagerDelegate {
         locationManager.requestWhenInUseAuthorization()
         
         locationManager.startUpdatingLocation()
+        
+        //Make sure the cancel uber is available when loged out
+        
+        if let email = Auth.auth().currentUser?.email {
+            
+            Database.database().reference().child("RiderRequests").queryOrdered(byChild: "email").queryEqual(toValue: email).observe(.childAdded) { (snapshot) in
+                
+                self.uberHasBeenCalled = true
+                
+                self.callAnUberButton.setTitle("Cancel Uber", for: .normal)
+                
+                Database.database().reference().child("RiderRequests").removeAllObservers()
+                
+            }
+            
+        }
         
         
     }
@@ -77,6 +95,9 @@ class RiderViewController: UIViewController, CLLocationManagerDelegate {
     
     @IBAction func logoutPressed(_ sender: UIBarButtonItem) {
         
+        try? Auth.auth().signOut()
+        
+        navigationController?.dismiss(animated: true, completion: nil)
         
     }
     
@@ -84,9 +105,34 @@ class RiderViewController: UIViewController, CLLocationManagerDelegate {
         
         if let email = Auth.auth().currentUser?.email {
             
-            let rideRequestDictionary : [String: Any] = ["email" : email, "lat" : userLocation.latitude, "lon" : userLocation.longitude]
+            if uberHasBeenCalled {
+                
+                uberHasBeenCalled = false
+                
+                callAnUberButton.setTitle("Call an Uber", for: .normal)
+                
+                Database.database().reference().child("RiderRequests").queryOrdered(byChild: "email").queryEqual(toValue: email).observe(.childAdded) { (snapshot) in
+                    
+                    snapshot.ref.removeValue()
+                    
+                    Database.database().reference().child("RiderRequests").removeAllObservers()
+                    
+                }
+                
+                
+            } else {
+                
+                let rideRequestDictionary : [String: Any] = ["email" : email, "lat" : userLocation.latitude, "lon" : userLocation.longitude]
+                
+                Database.database().reference().child("RiderRequests").childByAutoId().setValue(rideRequestDictionary)
+                
+                uberHasBeenCalled = true
+                
+                callAnUberButton.setTitle("Cancel Uber", for: .normal)
+                
+            }
             
-            Database.database().reference().child("RiderRequest").childByAutoId().setValue(rideRequestDictionary)
+            
             
         }
         
