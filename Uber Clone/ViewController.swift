@@ -9,7 +9,6 @@
 import UIKit
 import FirebaseAuth
 
-
 class ViewController: UIViewController {
     
     //Outlets
@@ -20,9 +19,9 @@ class ViewController: UIViewController {
     
     @IBOutlet var riderDriverSwitch: UISwitch!
     
-    @IBOutlet var signUpOutlet: UIButton!
+    @IBOutlet var topButton: UIButton!
     
-    @IBOutlet var loginOutlet: UIButton!
+    @IBOutlet var bottomButton: UIButton!
     
     @IBOutlet var riderLabel: UILabel!
     
@@ -38,17 +37,91 @@ class ViewController: UIViewController {
     }
     
     
-    @IBAction func signUpPressed(_ sender: UIButton) {
+    @IBAction func topButtonPressed(_ sender: UIButton) {
+        
+        if emailTextField.text == "" || passwordTextField.text == "" {
+            
+            displayAlert(title: "Missing Information", message: "You must provide both an Email and Password")
+            
+        } else {
+            
+            if let email = emailTextField.text {
+                
+                if let password = passwordTextField.text {
+                    
+                    if signUpMode {
+                        //SIGN UP
+                       
+                        Auth.auth().createUser(withEmail: email, password: password) { (user, error) in
+                            
+                            if error != nil {
+                                
+                                self.displayAlert(title: "Error", message: error!.localizedDescription)
+                                
+                            } else {
+                                
+                                print("Sign Up Success")
+                                
+                            }
+                            
+                        }
+                        
+                        
+                        
+                    } else {
+                        //LOG IN
+                        
+                        Auth.auth().signIn(withEmail: email, password: password) { (user, error) in
+                            
+                            if error != nil {
+                                
+                                self.displayAlert(title: "Error", message: error!.localizedDescription)
+                                
+                            } else {
+                                
+                                print("Log In Success")
+                                
+                            }
+                            
+                            
+                        }
+                        
+                        
+                    }
+                    
+                }
+                
+            }
+            
+        }
+        
     }
     
     
-    @IBAction func loginPressed(_ sender: UIButton) {
+    //MARK: - My Methods
+    
+    func displayAlert(title: String, message: String) {
+        
+        let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
+        
+        alertController.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+        
+        self.present(alertController, animated: true, completion: nil)
+        
+    }
+    
+    
+    
+    
+    //MARK: - Button Actions
+    
+    @IBAction func bottomButtonPressed(_ sender: UIButton) {
         
         if signUpMode {
             
-            signUpOutlet.setTitle("Log In", for: .normal)
+            topButton.setTitle("Log In", for: .normal)
             
-            loginOutlet.setTitle("Switch to Sign Up", for: .normal)
+            bottomButton.setTitle("Switch to Sign Up", for: .normal)
             
             riderLabel.isHidden = true
             
@@ -60,9 +133,9 @@ class ViewController: UIViewController {
             
         } else {
             
-            signUpOutlet.setTitle("Sign Up", for: .normal)
+            topButton.setTitle("Sign Up", for: .normal)
             
-            loginOutlet.setTitle("Switch to Log In", for: .normal)
+            bottomButton.setTitle("Switch to Log In", for: .normal)
             
             riderLabel.isHidden = false
             
