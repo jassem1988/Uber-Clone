@@ -8,11 +8,13 @@
 
 import UIKit
 import MapKit
+import FirebaseDatabase
+import FirebaseAuth
 
 class RiderViewController: UIViewController, CLLocationManagerDelegate {
     
     //Outlets
-
+    
     @IBOutlet var map: MKMapView!
     
     @IBOutlet var callAnUberButton: UIButton!
@@ -21,11 +23,13 @@ class RiderViewController: UIViewController, CLLocationManagerDelegate {
     
     var locationManager = CLLocationManager()
     
+    var userLocation = CLLocationCoordinate2D()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
         //Location Manager set up
-
+        
         locationManager.delegate = self
         
         locationManager.desiredAccuracy = kCLLocationAccuracyBest
@@ -46,10 +50,11 @@ class RiderViewController: UIViewController, CLLocationManagerDelegate {
             
             let center = CLLocationCoordinate2D(latitude: coord.latitude, longitude: coord.longitude)
             
+            userLocation = center
+            
             let region = MKCoordinateRegion(center: center, span: MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01))
             
             map.setRegion(region, animated: true)
-            
             
             map.removeAnnotations(map.annotations) //Remove all previous annotations
             
@@ -69,7 +74,7 @@ class RiderViewController: UIViewController, CLLocationManagerDelegate {
     
     //MARK: - Actions Methods
     
-
+    
     @IBAction func logoutPressed(_ sender: UIBarButtonItem) {
         
         
@@ -77,7 +82,15 @@ class RiderViewController: UIViewController, CLLocationManagerDelegate {
     
     @IBAction func callUberPressed(_ sender: UIButton) {
         
+        if let email = Auth.auth().currentUser?.email {
+            
+            let rideRequestDictionary : [String: Any] = ["email" : email, "lat" : userLocation.latitude, "lon" : userLocation.longitude]
+            
+            Database.database().reference().child("RiderRequest").childByAutoId().setValue(rideRequestDictionary)
+            
+        }
+        
     }
     
-
+    
 }
