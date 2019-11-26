@@ -62,6 +62,8 @@ class ViewController: UIViewController {
                                 
                                 print("Sign Up Success")
                                 
+                                self.performSegue(withIdentifier: "riderSegue", sender: nil)
+                                
                             }
                             
                         }
@@ -80,6 +82,8 @@ class ViewController: UIViewController {
                             } else {
                                 
                                 print("Log In Success")
+                                
+                                self.performSegue(withIdentifier: "riderSegue", sender: nil)
                                 
                             }
                             
