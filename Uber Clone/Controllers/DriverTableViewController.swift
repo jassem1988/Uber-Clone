@@ -9,14 +9,29 @@
 import UIKit
 import FirebaseAuth
 import FirebaseDatabase
+import MapKit
 
-class DriverTableViewController: UITableViewController {
+class DriverTableViewController: UITableViewController, CLLocationManagerDelegate {
     
     //Variables
     var rideRequests : [DataSnapshot] = []
+    
+    var locationManager = CLLocationManager()
+    
+    var driverLocation = CLLocationCoordinate2D()
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        //Location Manager set up
+        
+        locationManager.delegate = self
+        
+        locationManager.desiredAccuracy = kCLLocationAccuracyBest
+        
+        locationManager.requestWhenInUseAuthorization()
+        
+        locationManager.startUpdatingLocation()
         
         //Search for ride requests
         Database.database().reference().child("RiderRequests").observe(.childAdded) { (snapshot) in
@@ -26,7 +41,29 @@ class DriverTableViewController: UITableViewController {
             self.tableView.reloadData()
             
         }
+        
+        //Create a Timer to update riders locations automaticly
+        
+        Timer.scheduledTimer(withTimeInterval: 3, repeats: true) { (timer) in
+            
+            self.tableView.reloadData()
+            
+        }
 
+        
+    }
+    
+    
+    //MARK: - Location Manager Methods
+    
+    
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        
+        if let coord = manager.location?.coordinate {
+            
+            driverLocation = coord
+            
+        }
         
     }
 
@@ -47,7 +84,23 @@ class DriverTableViewController: UITableViewController {
             
             if let email = rideRequestsDictionary["email"] as? String {
                 
-                cell.textLabel?.text = email
+                if let lat = rideRequestsDictionary["lat"] as? Double {
+                    
+                    if let lon = rideRequestsDictionary["lon"] as? Double {
+                        
+                        let driverCLLocation = CLLocation(latitude: driverLocation.latitude, longitude: driverLocation.longitude)
+                        
+                        let riderCLLocation = CLLocation(latitude: lat, longitude: lon)
+                        
+                        let distance = driverCLLocation.distance(from: riderCLLocation) / 1000
+                        
+                        let roundedDistance = round(distance * 100) / 100
+                        
+                        cell.textLabel?.text = "\(email) - \(roundedDistance)km away"
+                        
+                    }
+                    
+                }
                 
             }
             
