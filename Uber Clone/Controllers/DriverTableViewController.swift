@@ -142,6 +142,7 @@ class DriverTableViewController: UITableViewController, CLLocationManagerDelegat
                                 
                                 acceptVC.requestLocation = location
                                 
+                                acceptVC.driverLocation = driverLocation
                                 
                             }
                             
