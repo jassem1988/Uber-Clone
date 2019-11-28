@@ -19,7 +19,7 @@ class DriverTableViewController: UITableViewController, CLLocationManagerDelegat
     var locationManager = CLLocationManager()
     
     var driverLocation = CLLocationCoordinate2D()
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -49,7 +49,7 @@ class DriverTableViewController: UITableViewController, CLLocationManagerDelegat
             self.tableView.reloadData()
             
         }
-
+        
         
     }
     
@@ -66,9 +66,9 @@ class DriverTableViewController: UITableViewController, CLLocationManagerDelegat
         }
         
     }
-
+    
     // MARK: - Table view data source
-
+    
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         // #warning Incomplete implementation, return the number of rows
         return rideRequests.count
@@ -106,12 +106,59 @@ class DriverTableViewController: UITableViewController, CLLocationManagerDelegat
             
         }
         
-        
-        
         return cell
         
     }
-
+    
+    
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        
+        let snapshot = rideRequests[indexPath.row]
+        
+        performSegue(withIdentifier: "acceptSegue", sender: snapshot)
+        
+    }
+    
+    
+    //MARK: - My Methods
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        
+        if let acceptVC = segue.destination as? AcceptRequestViewController {
+            
+            if let snapshot = sender as? DataSnapshot {
+                
+                if let rideRequestsDictionary = snapshot.value as? [String : AnyObject] {
+                    
+                    if let email = rideRequestsDictionary["email"] as? String {
+                        
+                        if let lat = rideRequestsDictionary["lat"] as? Double {
+                            
+                            if let lon = rideRequestsDictionary["lon"] as? Double {
+                                
+                                acceptVC.requestEmail = email
+                                
+                                let location = CLLocationCoordinate2D(latitude: lat, longitude: lon)
+                                
+                                acceptVC.requestLocation = location
+                                
+                                
+                            }
+                            
+                        }
+                        
+                    }
+                    
+                }
+                
+            }
+            
+        }
+        
+    }
+    
+    
+    
     @IBAction func logoutPressed(_ sender: UIBarButtonItem) {
         
         try? Auth.auth().signOut()
@@ -121,5 +168,5 @@ class DriverTableViewController: UITableViewController, CLLocationManagerDelegat
         
     }
     
-
+    
 }

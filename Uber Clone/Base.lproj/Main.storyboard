@@ -186,10 +186,54 @@
                             </connections>
                         </barButtonItem>
                     </navigationItem>
+                    <connections>
+                        <segue destination="a0O-LA-j8k" kind="show" identifier="acceptSegue" id="muV-3Y-MDp"/>
+                    </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="3WZ-3n-bAa" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="1883" y="842"/>
+        </scene>
+        <!--Accept Request View Controller-->
+        <scene sceneID="0Tg-2c-2xh">
+            <objects>
+                <viewController id="a0O-LA-j8k" customClass="AcceptRequestViewController" customModule="Uber_Clone" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="1h6-lq-RKR">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <mapView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" mapType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="nI6-nw-pJf">
+                                <rect key="frame" x="20" y="108" width="374" height="374"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" secondItem="nI6-nw-pJf" secondAttribute="height" multiplier="1:1" id="2En-e7-4U2"/>
+                                </constraints>
+                            </mapView>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="jJj-fu-UO3">
+                                <rect key="frame" x="152.5" y="490" width="109" height="30"/>
+                                <state key="normal" title="Accept Request"/>
+                                <connections>
+                                    <action selector="acceptPressed:" destination="a0O-LA-j8k" eventType="touchUpInside" id="AU6-E8-IHS"/>
+                                </connections>
+                            </button>
+                        </subviews>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                        <constraints>
+                            <constraint firstItem="nJn-ch-Tg5" firstAttribute="trailing" secondItem="nI6-nw-pJf" secondAttribute="trailing" constant="20" id="GAz-C8-A42"/>
+                            <constraint firstItem="jJj-fu-UO3" firstAttribute="centerX" secondItem="1h6-lq-RKR" secondAttribute="centerX" id="JFs-tk-N8m"/>
+                            <constraint firstItem="nI6-nw-pJf" firstAttribute="top" secondItem="nJn-ch-Tg5" secondAttribute="top" constant="20" id="RIt-gL-Liq"/>
+                            <constraint firstItem="nI6-nw-pJf" firstAttribute="leading" secondItem="nJn-ch-Tg5" secondAttribute="leading" constant="20" id="RMd-IV-hPm"/>
+                            <constraint firstItem="jJj-fu-UO3" firstAttribute="top" secondItem="nI6-nw-pJf" secondAttribute="bottom" constant="8" id="VHU-Hr-fBv"/>
+                        </constraints>
+                        <viewLayoutGuide key="safeArea" id="nJn-ch-Tg5"/>
+                    </view>
+                    <navigationItem key="navigationItem" id="DFa-BS-xSl"/>
+                    <connections>
+                        <outlet property="map" destination="nI6-nw-pJf" id="qd1-Qq-WgT"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Jay-VK-8po" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="2828.985507246377" y="841.74107142857144"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="Qpl-FG-g3A">
